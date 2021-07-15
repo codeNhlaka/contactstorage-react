@@ -77,17 +77,14 @@ code {
   height: 30px !important;
 }
 
-/* Track */
 .content::-webkit-scrollbar-track {
   background: none;
 }
 
-/* Handle */
 .content::-webkit-scrollbar-thumb {
   background: rgb(42, 42, 42);
 }
 
-/* Handle on hover */
 .content::-webkit-scrollbar-thumb:hover {
   background: #555;
 }

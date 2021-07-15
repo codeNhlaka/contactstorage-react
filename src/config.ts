@@ -1,4 +1,4 @@
-export default {
+const config = {
     apiGateway: {
         REGION: "us-east-2",
         URL: "https://0bbyo859l9.execute-api.us-east-2.amazonaws.com/dev"
@@ -9,3 +9,5 @@ export default {
         APP_CLIENT_ID: "36ksfkce6qnvr481g2bt742p83"
     }
 }
+
+export default config;

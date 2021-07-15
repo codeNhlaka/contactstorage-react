@@ -22,7 +22,7 @@ function Contact(Props: contactProps){
       }
       setContactDigits(Props.information.Digits);
       setContactName(Props.information.Name);
-    }, []);
+    }, [Props.information.Digits, Props.information.Name, Props.information.Status]);
 
     class ComponentInputAPI {
       static handleNameChange(e: React.ChangeEvent<HTMLInputElement>){

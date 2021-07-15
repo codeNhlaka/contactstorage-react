@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Amplify, { API, Auth } from "aws-amplify";
-import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
+import { withAuthenticator } from '@aws-amplify/ui-react';
 import { v4 as uuidv4 } from 'uuid';
 import Contact from "./components/contact.component";
 import { useSelector, useDispatch } from 'react-redux';
@@ -26,7 +26,7 @@ Amplify.configure({
 });
 
 function ContactList(){
-  
+
   interface DefaultRootState {
     appReducer: {
       contactList: ContactInterface[]
@@ -57,56 +57,36 @@ function App () {
     return generatedData;
   }
 
-  class DispatchAPI {
-      static updateList(item: any){
-        return dispatch({type: "add", data: item })
-      }
-  }
-
-  class ContactAPI {
-      static async fetchList(){
-        const apiName = 'contactStorageAPI';
-        const path = '/list'; 
-        const myInit = { 
-              headers: { 
-                Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
-              }
-            }
-    
-        API.get(apiName, path, myInit)
-          .then(response => {
-            const parsedResponse = JSON.parse(response.body);
-            const { Items } = parsedResponse.result;
-            let i;
-            
-            for (i = 0; i <= Items.length; i++){
-              DispatchAPI.updateList(Items[i]);
-            }
-          })
-          .catch(error => {console.log(error)});
-      }
-
-    static async createItem(putParams: any){
-        const apiName = 'contactStorageAPI';
-        const path = '/create'; 
-
-        const myInit = { 
-          headers: { 
-            Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
-          },
-          body: JSON.stringify(putParams)
-        };
-
-        API.post(apiName, path, myInit)
-        .then(response => {console.log(response)})
-        .catch(error => {console.log(error)});
-    }
+  function updateList(item: ContactInterface){
+    return dispatch({type: "add", data: item })
   }
 
   useEffect(() => {
     // fetch authenticated user contact list
-    ContactAPI.fetchList();
-  }, []);
+    async function fetchList(){
+      const apiName = 'contactStorageAPI';
+      const path = '/list'; 
+      const myInit = { 
+            headers: { 
+              Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
+            }
+          }
+  
+      API.get(apiName, path, myInit)
+        .then(response => {
+          const parsedResponse = JSON.parse(response.body);
+          const { Items } = parsedResponse.result;
+          let i;
+          
+          for (i = 0; i <= Items.length; i++){
+            dispatch({type: "add", data: Items[i]})
+          }
+        })
+        .catch(error => {console.log(error)});
+    }
+
+    fetchList();
+  }, [dispatch]);
 
  
   return (
@@ -122,7 +102,7 @@ function App () {
         </div>
           <ContactList />
         </div>
-        <button className="add" onClick={() => DispatchAPI.updateList(generateContact())} >+</button>       
+        <button className="add" onClick={() => updateList(generateContact())} >+</button>       
       </div>
     </div>
   );
