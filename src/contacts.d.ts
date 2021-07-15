@@ -4,3 +4,4 @@ export interface ContactInterface {
     Digits: string;
     Status?: string;
 }
+

@@ -26,7 +26,14 @@ Amplify.configure({
 });
 
 function ContactList(){
-  const contacts = useSelector(state => state.appReducer);
+  
+  interface DefaultRootState {
+    appReducer: {
+      contactList: ContactInterface[]
+    }
+  }
+
+  const contacts = useSelector((state: DefaultRootState) => state.appReducer);
   return (
     <>
       {contacts.contactList.length ? contacts.contactList.map(item => {
