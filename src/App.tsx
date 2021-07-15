@@ -49,8 +49,8 @@ function App () {
     
     const generatedData: ContactInterface = {
       ID: uuidv4().toString(),
-      Name: 'Null',
-      Digits: 'Null',
+      Name: 'Edit',
+      Digits: 'Edit',
       Status: 'Not Saved'
     }
 

@@ -126,7 +126,7 @@ function Contact(Props: contactProps){
         </div>
   
         <div className="inputContainer">
-          <input type="text" disabled={disableInput} placeholder={contactDigits} onChange={(e) => ComponentInputAPI.handleDigitsChange(e)} onBlur={() => ComponentBackendAPI.updateInformation()} />
+          <input type="text" disabled={disableInput} maxLength={10} placeholder={contactDigits} onChange={(e) => ComponentInputAPI.handleDigitsChange(e)} onBlur={() => ComponentBackendAPI.updateInformation()} />
         </div>
 
         <div className="progress">
