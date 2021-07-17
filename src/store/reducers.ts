@@ -1,14 +1,14 @@
 import { ContactInterface } from "../contacts";
 import { combineReducers, createStore } from "redux";
 
-interface StateInterface {
-    contactList: ContactInterface[];
-}
-
 interface ActionInterface {
     type: string;
     data?: ContactInterface;
     id?: string;
+}
+
+interface StateInterface {
+    contactList: ContactInterface[];
 }
 
 const initState : StateInterface = {

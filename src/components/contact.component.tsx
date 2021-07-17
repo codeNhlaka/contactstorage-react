@@ -1,22 +1,32 @@
-import { API, Auth } from "aws-amplify";
 import DeleteIcon from "./delete.component";
 import { useEffect, useState } from "react";
 import { ContactInterface } from "../contacts";
-import { useSelector, useDispatch } from 'react-redux';
 import { DefaultRootState } from '../store/defaultstate';
 import './contact.component.css';
 
-interface contactProps {
+interface ItemInfoInterface {
+  id: string;
+  name: string;
+  digits: string;
+}
+
+interface GlobalComponentProps {
+  create: (data: ItemInfoInterface) => void;
+  delete: (id: string, unsaved: boolean) => void;
+}
+
+interface ComponentProps extends GlobalComponentProps{
+  contacts: DefaultRootState['appReducer'];
+}
+
+interface contactProps extends GlobalComponentProps{
   information: ContactInterface;
 }
 
 function Contact(Props: contactProps) {
-  const status = ['deleting', 'saving', 'saved', 'unsaved'];
   const [contactDigits, setContactDigits] = useState('');
   const [contactName, setContactName] = useState('');
-  const [statusUpdate, setStatusUpdate] = useState('');
   const [disableInput, setDisableInput] = useState(true);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (Props.information.Status) {
@@ -38,81 +48,21 @@ function Contact(Props: contactProps) {
     }
   }
 
-  // delete a contact
-
   async function deleteItem() {
     const { ID } = Props.information;
-    if (ID) {
-      setStatusUpdate(status[0]);
-      const apiName = 'contactStorageAPI';
-      const path = `/delete/${ID}`;
-
-      const myInit = {
-        headers: {
-          Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
-        }
-      };
-
-      API
-        .del(apiName, path, myInit)
-        .then(response => {
-          const parsedResponse = JSON.parse(response.body);
-          const { message } = parsedResponse;
-          if (message === 'Success') {
-            dispatch({ type: 'remove', id: ID });
-            setStatusUpdate('');
-          }
-        })
-        .catch(error => {
-          console.log(error.response);
-        });
-    }
-  }
-
-  // create a contact
-
-  async function createItem() {
-
-    const putParams = {
-      id: Props.information.ID,
-      digits: contactDigits,
-      name: contactName
-    }
-
-    const apiName = 'contactStorageAPI';
-    const path = '/create';
-
-    const myInit = {
-      headers: {
-        Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}`,
-      },
-      body: JSON.stringify(putParams)
-    };
-
-    API.post(apiName, path, myInit)
-      .then(response => {
-        const parsedResponse = JSON.parse(response.body);
-        const { message } = parsedResponse;
-
-        if (message === 'Success') {
-          setStatusUpdate(status[2]);
-          setDisableInput(true);
-
-          setTimeout(() => {
-            setStatusUpdate('');
-          }, 2000)
-        }
-      })
-      .catch(error => { console.log(error) });
-  }
-
+    const unsavedContact: boolean = (contactName === 'Edit' && contactDigits === 'Edit');
+    return Props.delete(ID, unsavedContact);
+  } 
 
   class ComponentBackendAPI {
     static async updateInformation() {
       if (contactDigits.length === 10 && contactName.length > 3) {
-        setStatusUpdate(status[1]);
         try {
-          return createItem();
+          Props.create({
+            id: Props.information.ID,
+            name: contactName,
+            digits: contactDigits
+          });
         } catch (error) {
           throw new Error(error);
         }
@@ -132,7 +82,7 @@ function Contact(Props: contactProps) {
       </div>
 
       <div className="progress">
-        <p>{statusUpdate}...</p>
+        <p>...</p>
       </div>
       <div className="iconContainer" onClick={() => deleteItem()}>
         <DeleteIcon />
@@ -141,12 +91,13 @@ function Contact(Props: contactProps) {
   )
 }
 
-export function ContactList(){
-  const contacts = useSelector((state: DefaultRootState) => state.appReducer);
+export function ContactList(Props: ComponentProps){
+  const list = Props.contacts.contactList;
+
   return (
     <>
-      {contacts.contactList.length ? contacts.contactList.map(item => {
-        return <Contact key={item.ID} information={item} />
+      {list.length ? list.map(item => {
+        return <Contact create={Props.create} delete={Props.delete} key={item.ID} information={item} />
       }) : null}
     </>
   )

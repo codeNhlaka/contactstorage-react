@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import Amplify, { API, Auth } from "aws-amplify";
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import { v4 as uuidv4 } from 'uuid';
-import ContactList from "./components/contact.component";
 import { useDispatch } from 'react-redux';
 import config from "./config";
 import { ContactInterface } from "./contacts";
+import ContactBook from "./containers/contact";
 
 Amplify.configure({
   Auth: {
@@ -27,6 +27,7 @@ Amplify.configure({
 
 function App () {
   const dispatch = useDispatch();
+
   function generateContact(){
     
     const generatedData: ContactInterface = {
@@ -61,6 +62,7 @@ function App () {
           let i;
           
           for (i = 0; i <= Items.length; i++){
+            // add contact stuatus to each;
             dispatch({type: "add", data: Items[i]})
           }
         })
@@ -81,8 +83,9 @@ function App () {
             <div className="table">
               <p className="tableContactName">Name</p>
               <p className="tableContactNumber">Digits</p>
-        </div>
-          <ContactList />
+            </div>
+            
+            <ContactBook />
         </div>
         <button className="add" onClick={() => updateList(generateContact())} >+</button>       
       </div>
