@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import Amplify, { API, Auth } from "aws-amplify";
 import { withAuthenticator } from '@aws-amplify/ui-react';
 import { v4 as uuidv4 } from 'uuid';
-import Contact from "./components/contact.component";
-import { useSelector, useDispatch } from 'react-redux';
+import ContactList from "./components/contact.component";
+import { useDispatch } from 'react-redux';
 import config from "./config";
 import { ContactInterface } from "./contacts";
 
@@ -24,24 +24,6 @@ Amplify.configure({
     ]
   }
 });
-
-function ContactList(){
-
-  interface DefaultRootState {
-    appReducer: {
-      contactList: ContactInterface[]
-    }
-  }
-
-  const contacts = useSelector((state: DefaultRootState) => state.appReducer);
-  return (
-    <>
-      {contacts.contactList.length ? contacts.contactList.map(item => {
-        return <Contact key={item.ID} information={item} />
-      }) : null}
-    </>
-  )
-}
 
 function App () {
   const dispatch = useDispatch();
