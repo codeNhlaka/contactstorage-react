@@ -26,7 +26,6 @@ function ContactBook(){
         }
     }
 
-
     function createItem(data: ItemInfoInterface) {
 
         const putParams = {
