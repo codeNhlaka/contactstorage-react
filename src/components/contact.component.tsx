@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
 import { ContactInterface } from "../contacts";
 import { DefaultRootState } from '../store/defaultstate';
+import { ItemInfoInterface } from '../store/api';
 import './contact.component.css';
-
-interface ItemInfoInterface {
-  id: string;
-  name: string;
-  digits: string;
-}
 
 interface GlobalComponentProps {
   create: (data: ItemInfoInterface) => void;
